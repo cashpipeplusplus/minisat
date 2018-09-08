@@ -1,2 +1,11 @@
-config.mk
-build
+Makefile
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+libminisat.a
+libminisat.so
+libminisat.so.2
+libminisat.so.2.1.0
+minisat_core
+minisat_simp
