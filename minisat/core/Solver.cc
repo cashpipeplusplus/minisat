@@ -56,6 +56,7 @@ Solver::Solver() :
     // Parameters (user settable):
     //
     verbosity        (0)
+  , learnedClsCallback(0)
   , var_decay        (opt_var_decay)
   , clause_decay     (opt_clause_decay)
   , random_var_freq  (opt_random_var_freq)
@@ -716,6 +717,11 @@ lbool Solver::search(int nof_conflicts)
 
             learnt_clause.clear();
             analyze(confl, learnt_clause, backtrack_level);
+
+            if (learnedClsCallback != 0) {
+              learnedClsCallback(learnt_clause, issuer);
+            }
+
             cancelUntil(backtrack_level);
 
             if (learnt_clause.size() == 1){
@@ -779,6 +785,7 @@ lbool Solver::search(int nof_conflicts)
                 // New variable decision:
                 decisions++;
                 next = pickBranchLit();
+                lastDecision = var(next);
 
                 if (next == lit_Undef)
                     // Model found:
