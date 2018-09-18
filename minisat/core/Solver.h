@@ -56,11 +56,10 @@ public:
     bool    addClause_(      vec<Lit>& ps);                     // Add a clause to the solver without making superflous internal copy. Will
                                                                 // change the passed vector 'ps'.
 
-    // Portfolio support
-    void (*learnedClsCallback)(const vec<Lit>&, void* issuer);  // callback for clause learning
-    void *issuer;                                               // used as the callback parameter
-    void addLearnedClause(const vec<Lit>& cls);                 // add a learned clause by hand
-    int  lastDecision;                                          // the last decision made by the solver
+    // HordeSAT Portfolio interface:
+    void (*learnt_clause_callback)(const vec<Lit>&, void* context);  // callback for clause learning
+    void *learnt_clause_callback_context;
+    void addLearntClause(const vec<Lit>& cls);                       // add a clause learnt by another node
 
     // Solving:
     //
@@ -306,7 +305,7 @@ protected:
 //=================================================================================================
 // Implementation of inline methods:
 
-inline void Solver::addLearnedClause(const vec<Lit>& cls) {
+inline void Solver::addLearntClause(const vec<Lit>& cls) {
     CRef cr = ca.alloc(cls, true);
     learnts.push(cr);
     attachClause(cr);

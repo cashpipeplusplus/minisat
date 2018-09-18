@@ -56,7 +56,6 @@ Solver::Solver() :
     // Parameters (user settable):
     //
     verbosity        (0)
-  , learnedClsCallback(0)
   , var_decay        (opt_var_decay)
   , clause_decay     (opt_clause_decay)
   , random_var_freq  (opt_random_var_freq)
@@ -102,6 +101,10 @@ Solver::Solver() :
   , conflict_budget    (-1)
   , propagation_budget (-1)
   , asynch_interrupt   (false)
+
+    // HordeSAT portfolio interface:
+  , learnt_clause_callback(0)
+  , learnt_clause_callback_context(0)
 {}
 
 
@@ -718,8 +721,8 @@ lbool Solver::search(int nof_conflicts)
             learnt_clause.clear();
             analyze(confl, learnt_clause, backtrack_level);
 
-            if (learnedClsCallback != 0) {
-              learnedClsCallback(learnt_clause, issuer);
+            if (learnt_clause_callback != 0) {
+                learnt_clause_callback(learnt_clause, learnt_clause_callback_context);
             }
 
             cancelUntil(backtrack_level);
@@ -785,7 +788,6 @@ lbool Solver::search(int nof_conflicts)
                 // New variable decision:
                 decisions++;
                 next = pickBranchLit();
-                lastDecision = var(next);
 
                 if (next == lit_Undef)
                     // Model found:
